@@ -1,3 +1,6 @@
-# All standard text parsing plugins.
+# Optional plugins related to text parsing and displaying.
 
-+../../lib/media/vtt_text_parser.js
++../../lib/text/mp4_ttml_parser.js
++../../lib/text/mp4_vtt_parser.js
++../../lib/text/ttml_text_parser.js
++../../lib/text/vtt_text_parser.js
