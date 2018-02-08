@@ -17,8 +17,7 @@
 
 goog.provide('shaka.test.StreamingEngineUtil');
 
-goog.require('shaka.media.SegmentReference');
-goog.require('shaka.test.FakeNetworkingEngine');
+/** @fileoverview @suppress {missingRequire} */
 
 
 /**
@@ -71,7 +70,7 @@ shaka.test.StreamingEngineUtil.createFakeNetworkingEngine = function(
     }
 
     var response = {uri: request.uris[0], data: buffer, headers: {}};
-    return Promise.resolve(response);
+    return shaka.util.AbortableOperation.completed(response);
   });
 
   netEngine.expectRequest = function(uri, type) {
@@ -106,16 +105,18 @@ shaka.test.StreamingEngineUtil.createFakeNetworkingEngine = function(
  * @param {number} segmentAvailabilityEnd The initial value of
  *   |segmentAvailabilityEnd|.
  * @param {number} presentationDuration
+ * @param {number} maxSegmentDuration
  * @param {boolean} isLive
  * @return {!Object} A PresentationTimeline look-alike.
  *
  */
 shaka.test.StreamingEngineUtil.createFakePresentationTimeline = function(
     segmentAvailabilityStart, segmentAvailabilityEnd, presentationDuration,
-    isLive) {
+    maxSegmentDuration, isLive) {
   var timeline = {
     getDuration: jasmine.createSpy('getDuration'),
     setDuration: jasmine.createSpy('setDuration'),
+    getMaxSegmentDuration: jasmine.createSpy('getMaxSegmentDuration'),
     getSegmentAvailabilityDuration:
         jasmine.createSpy('getSegmentAvailabilityDuration'),
     isLive: jasmine.createSpy('isLive'),
@@ -132,6 +133,8 @@ shaka.test.StreamingEngineUtil.createFakePresentationTimeline = function(
   };
 
   timeline.getDuration.and.returnValue(presentationDuration);
+
+  timeline.getMaxSegmentDuration.and.returnValue(maxSegmentDuration);
 
   timeline.isLive.and.callFake(function() {
     return isLive;
